@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoriaApi", "InventoriaApi\InventoriaApi.csproj", "{A648B014-F00E-42DF-B144-AC5D0997171F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A648B014-F00E-42DF-B144-AC5D0997171F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A648B014-F00E-42DF-B144-AC5D0997171F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A648B014-F00E-42DF-B144-AC5D0997171F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A648B014-F00E-42DF-B144-AC5D0997171F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4D15410-1FDC-4134-B515-37A70853067D}
+	EndGlobalSection
+EndGlobal
