@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InventoriaApi.DTOs;
+namespace InventoriaApi.DTOs.ReceivedDTOs;
 public class AuthenticateUserDTO
 {
     [Required, DataType(DataType.Password)]

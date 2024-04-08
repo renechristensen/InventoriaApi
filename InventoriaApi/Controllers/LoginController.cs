@@ -2,7 +2,12 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using InventoriaApi.DTOs;
+using System.Security.Claims;
+using InventoriaApi.Services.RepositoryInterfaces;
+using InventoriaApi.Services.Repositories;
+using InventoriaApi.Models;
+using InventoriaApi.DTOs.ReceivedDTOs;
+using InventoriaApi.DTOs.ResponseDTO;
 
 namespace InventoriaApi.Controllers
 {
@@ -10,28 +15,58 @@ namespace InventoriaApi.Controllers
     [ApiController]
     public class LoginController : Controller
     {
+        private IUserRepository _userRepository;
         private IConfiguration _config;
-        public LoginController(IConfiguration config)
+        public LoginController(IConfiguration config, UserRepository userRepository)
         {
             _config = config;
+            _userRepository = userRepository;
         }
 
         [HttpPost]
         public async Task<ActionResult<string>> Login(AuthenticateUserDTO authenticateUserDTO){
+            // check if login was succesful
+            if (!await _userRepository.VerifyLogin(authenticateUserDTO.StudieEmail, authenticateUserDTO.PasswordHash)) 
+                return StatusCode(404, "Username or password is wrong");
 
+            // note that User will never be null here
+            User? user = _userRepository.ReadUserRecordByEmail(authenticateUserDTO.StudieEmail);
+
+
+            //setting up claims list
+            List<Claim> claims = new()
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, authenticateUserDTO.StudieEmail)
+            };
+
+            // here we will eventually add a list of userroles as claims
+
+
+            // This line is used for getting the key from the appsettings configuration file. It is defunct.
             //var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")));
 
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
-              _config["Jwt:Issuer"],
-              null,
+            var Sectoken = new JwtSecurityToken(
+              issuer: _config["Jwt:Issuer"],
+              audience: _config["Jwt:Audience"],
+              claims: claims,
               expires: DateTime.Now.AddMinutes(120),
               signingCredentials: credentials);
 
             var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
-            return Ok(token);
+
+            AuthenticatedUserSuccessDTO login = new AuthenticatedUserSuccessDTO()
+            {
+                UserID = user.UserID,
+                Displayname = user.Displayname,
+                StudieEmail = user.StudieEmail,
+                CompanyID = user.CompanyID
+
+            };
+            var obj = new {login, token};
+            return Ok(obj);
         }
     }
 }

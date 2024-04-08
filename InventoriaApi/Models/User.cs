@@ -3,7 +3,8 @@ public class User
 {
     public int UserID { get; set; }
     public string Displayname { get; set; }
-    public string PasswordHash { get; set; }
+    public byte[] PasswordHash { get; set; }
+    public byte[] PasswordSalt { get; set; }
     public string StudieEmail { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime LastLoginDate { get; set; }
