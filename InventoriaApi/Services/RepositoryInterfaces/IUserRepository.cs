@@ -1,10 +1,8 @@
 ﻿using InventoriaApi.Models;
 
-namespace InventoriaApi.Services.RepositoryInterfaces
+namespace InventoriaApi.Services.RepositoryInterfaces;
+public interface IUserRepository : IGenericRepository<User>
 {
-    public interface IUserRepository : IGenericRepository<User>
-    {
-        Task<bool> VerifyLogin(string email, string password);
-        public User? ReadUserRecordByEmail(string studieEmail);
-    }
+    Task<bool> VerifyLogin(string email, string password);
+    public User? ReadUserRecordByEmail(string studieEmail);
 }

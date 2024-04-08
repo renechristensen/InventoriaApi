@@ -17,7 +17,7 @@ namespace InventoriaApi.Controllers
     {
         private IUserRepository _userRepository;
         private IConfiguration _config;
-        public LoginController(IConfiguration config, UserRepository userRepository)
+        public LoginController(IConfiguration config, IUserRepository userRepository)
         {
             _config = config;
             _userRepository = userRepository;
@@ -25,6 +25,7 @@ namespace InventoriaApi.Controllers
 
         [HttpPost]
         public async Task<ActionResult<string>> Login(AuthenticateUserDTO authenticateUserDTO){
+            
             // check if login was succesful
             if (!await _userRepository.VerifyLogin(authenticateUserDTO.StudieEmail, authenticateUserDTO.PasswordHash)) 
                 return StatusCode(404, "Username or password is wrong");

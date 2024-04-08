@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Text;
+using InventoriaApi.Data;
+using InventoriaApi.Services.Repositories;
+using InventoriaApi.Services.RepositoryInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +29,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      };
  });
 
-// Add services to the container.
 
+
+// Add services to the container.
+// add repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// adding controllers
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Configure DbContext for MySQL
+builder.Services.AddDbContext<InventoriaDBcontext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 21))));
 
 var app = builder.Build();
 
