@@ -15,4 +15,3 @@ public class UserDTO
     public string CompanyName { get; set; }
     public List<string> Roles { get; set; } = new List<string>();
 }
-

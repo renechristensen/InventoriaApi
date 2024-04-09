@@ -13,5 +13,9 @@ public class User
     // Navigation properties
     public Company Company { get; set; }
     public List<UserRole> UserRoles { get; set; }
+    public List<Reservation> Reservations { get; set; }
+    public List<DataRacksChangeLog> DataRacksChangeLogs { get; set; }
+    public List<UserChangeLog> UserChangeLogs { get; set; }
+
 }
 

@@ -7,5 +7,5 @@ public class AlertType
     public string Description { get; set; }
 
     // Navigation property
-    public List<AlertType> Alerts { get; set; }
+    public List<Alert> Alerts { get; set; }
 }

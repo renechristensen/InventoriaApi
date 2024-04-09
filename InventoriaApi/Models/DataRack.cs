@@ -14,5 +14,6 @@ public class DataRack
     public ServerRoom ServerRoom { get; set; }
     public ICollection<RackUnit> RackUnits { get; set; }
     public ICollection<DataRacksChangeLog> DataRacksChangeLogs { get; set; }
+    public ICollection<RackAccessPermission> RackAccessPermissions { get; set; }
 }
 

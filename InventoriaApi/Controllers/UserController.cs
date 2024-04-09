@@ -9,6 +9,7 @@ using InventoriaApi.Models;
 using InventoriaApi.DTOs.ReceivedDTOs;
 using InventoriaApi.DTOs.ResponseDTO;
 using System.Security.Cryptography;
+using System.ComponentModel.Design;
 
 namespace InventoriaApi.Controllers
 {
@@ -108,10 +109,19 @@ namespace InventoriaApi.Controllers
         [HttpGet("GetUser/{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
-            var user = await _userRepository.ReadRecordByID(id);
+            var user = await _userRepository.ReadUserRecordByUserID(id);
             if (user == null)
             {
                 return NotFound($"User with ID {id} not found.");
+            }
+            List<string> roleNames = new();
+
+            if (user.UserRoles == null)
+            {
+                roleNames = new List<string>();
+            }
+            else {
+                roleNames = user.UserRoles.Select(ur => ur.Role.RoleName).ToList();
             }
 
             UserDTO userDto = new UserDTO
@@ -119,11 +129,14 @@ namespace InventoriaApi.Controllers
                 UserID = user.UserID,
                 Displayname = user.Displayname,
                 StudieEmail = user.StudieEmail,
-                // Other properties as needed
+                CreationDate = user.CreationDate,
+                LastLoginDate = user.LastLoginDate,
+                CompanyID = user.CompanyID,
+                Roles = roleNames
+
             };
 
             return Ok(userDto);
         }
-
     }
 }

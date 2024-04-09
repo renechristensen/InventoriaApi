@@ -10,4 +10,5 @@ public class ServerRoom
     // Navigation properties
     public DataCenter DataCenter { get; set; }
     public List<DataRack> DataRacks { get; set; }
+    public EnvironmentalSetting EnvironmentalSetting { get; set; }
 }

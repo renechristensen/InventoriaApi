@@ -16,11 +16,13 @@ namespace InventoriaApi.Controllers
     public class LoginController : Controller
     {
         private IUserRepository _userRepository;
+        private IUserRoleRepository _userRoleRepository;
         private IConfiguration _config;
-        public LoginController(IConfiguration config, IUserRepository userRepository)
+        public LoginController(IConfiguration config, IUserRepository userRepository, IUserRoleRepository userRoleRepository)
         {
             _config = config;
             _userRepository = userRepository;
+            _userRoleRepository = userRoleRepository;
         }
 
         [HttpPost]
@@ -33,15 +35,18 @@ namespace InventoriaApi.Controllers
             // note that User will never be null here
             User? user = _userRepository.ReadUserRecordByEmail(authenticateUserDTO.StudieEmail);
 
-
+            var userRoles = await _userRoleRepository.ReadAllUserRolesByUserID(user.UserID);
             //setting up claims list
             List<Claim> claims = new()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, authenticateUserDTO.StudieEmail)
             };
 
-            // here we will eventually add a list of userroles as claims
-
+            // Add role claims
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName));
+            }
 
             // This line is used for getting the key from the appsettings configuration file. It is defunct.
             //var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

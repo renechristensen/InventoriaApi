@@ -18,3 +18,4 @@ public interface IGenericRepository<T> where T : class
     // Not a CRUD functionality
     Task SaveRecord();
 }
+ 

@@ -7,4 +7,5 @@ public class Company
 
     // Navigation properties
     public List<DataCenter> DataCenters { get; set; }
+    public List<User> Users { get; set; }
 }

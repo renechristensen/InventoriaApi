@@ -28,7 +28,17 @@ namespace InventoriaApi.Services.Repositories
         }
         public User? ReadUserRecordByEmail(string studieEmail)
         {
-            return _context.Users.Where(e => e.StudieEmail == studieEmail).FirstOrDefault();
+            return _context.Users
+               .Include(u => u.UserRoles)
+                   .ThenInclude(ur => ur.Role)
+               .FirstOrDefault(e => e.StudieEmail == studieEmail);
+        }
+        public async Task<User?> ReadUserRecordByUserID(int UserID)
+        {
+            return _context.Users
+               .Include(u => u.UserRoles)
+                   .ThenInclude(ur => ur.Role)
+               .FirstOrDefault(e => e.UserID == UserID);
         }
         private bool VerifyPassword(string password, byte[] passwordHash, byte[] passwordSalt)
         {

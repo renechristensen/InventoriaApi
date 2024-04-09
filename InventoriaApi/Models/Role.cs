@@ -7,5 +7,6 @@ public class Role
 
     // Navigation property
     public List<UserRole> UserRoles { get; set; }
+    public List<RackAccessPermission> RackAccessPermissions { get; set; }
 }
 
