@@ -24,7 +24,7 @@ public class InventoriaDBcontext : DbContext
     public DbSet<EnvironmentalReading> EnvironmentalReadings { get; set; }
     public DbSet<EnvironmentalSetting> EnvironmentalSettings { get; set; }
     public DbSet<AlertType> AlertTypes { get; set; }
-    public DbSet<Alert> Alerts { get; set; }
+    public DbSet<AlertType> Alerts { get; set; }
     public DbSet<RackAccessPermission> RackAccessPermissions { get; set; }
     public DbSet<UserChangeLog> UserChangeLogs { get; set; }
     public DbSet<DataRacksChangeLog> DataRacksChangeLogs { get; set; }

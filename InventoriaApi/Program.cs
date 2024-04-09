@@ -33,7 +33,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Add services to the container.
 // add repositories
+builder.Services.AddScoped<IAlertRepository, AlertRepository>();
+builder.Services.AddScoped<IAlertTypeRepository, AlertTypeRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IDataCenterRepository, DataCenterRepository>();
+builder.Services.AddScoped<IDataRackRepository, DataRackRepository>();
+builder.Services.AddScoped<IDataRacksChangeLogRepository, DataRacksChangeLogRepository>();
+builder.Services.AddScoped<IEnvironmentalReadingRepository, EnvironmentalReadingRepository>();
+builder.Services.AddScoped<IEnvironmentalSettingRepository, EnvironmentalSettingRepository>();
+builder.Services.AddScoped<IEquipmentRackUnitRepository, EquipmentRackUnitRepository>();
+builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddScoped<IRackAccessPermissionRepository, RackAccessPermissionRepository>();
+builder.Services.AddScoped<IRackUnitRepository, RackUnitRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IReservedRackUnitRepository, ReservedRackUnitRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IServerRoomRepository, ServerRoomRepository>();
+builder.Services.AddScoped<IUserChangeLogRepository, UserChangeLogRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
 
 // adding controllers
 builder.Services.AddControllers();

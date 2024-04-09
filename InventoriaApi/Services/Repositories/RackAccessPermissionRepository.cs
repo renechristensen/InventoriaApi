@@ -1,0 +1,15 @@
+﻿using InventoriaApi.Models;
+using InventoriaApi.Data;
+using InventoriaApi.Services.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+
+namespace InventoriaApi.Services.Repositories
+{
+    public class RackAccessPermissionRepository: GenericRepository<RackAccessPermission, InventoriaDBcontext>, IRackAccessPermissionRepository
+    {
+        public RackAccessPermissionRepository(InventoriaDBcontext DBcontext) : base(DBcontext)
+        {
+        }
+    }
+}
