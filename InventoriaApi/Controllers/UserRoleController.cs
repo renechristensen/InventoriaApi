@@ -20,7 +20,7 @@ namespace InventoriaApi.Controllers
         private IUserRoleRepository _userRoleRepository;
         private IRoleRepository _roleRepository;
         private IConfiguration _config;
-        public UserRoleController(IConfiguration config,IUserRepository userRepository, IUserRoleRepository userRoleRepository, IRoleRepository roleRepository)
+        public UserRoleController(IConfiguration config, IUserRepository userRepository, IUserRoleRepository userRoleRepository, IRoleRepository roleRepository)
         {
             _config = config;
             _userRepository = userRepository;

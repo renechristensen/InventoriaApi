@@ -38,6 +38,7 @@ namespace InventoriaApi.Services.Repositories
             return _context.Users
                .Include(u => u.UserRoles)
                    .ThenInclude(ur => ur.Role)
+               .Include(u => u.Company)
                .FirstOrDefault(e => e.UserID == UserID);
         }
         private bool VerifyPassword(string password, byte[] passwordHash, byte[] passwordSalt)
@@ -48,6 +49,13 @@ namespace InventoriaApi.Services.Repositories
                 return computedHash.SequenceEqual(passwordHash);
             }
         }
-
+        public async Task<List<User>> ReadAllUsersWithRoles()
+        {
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .Include(u => u.Company)
+                .ToListAsync();
+        }
     }
 }

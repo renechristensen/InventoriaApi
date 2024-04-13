@@ -6,4 +6,7 @@ public interface IUserRepository : IGenericRepository<User>
     Task<bool> VerifyLogin(string email, string password);
     public User? ReadUserRecordByEmail(string studieEmail);
     public Task<User?> ReadUserRecordByUserID(int UserID);
+    public Task<List<User>> ReadAllUsersWithRoles();
+
 }
+ 

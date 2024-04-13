@@ -35,6 +35,11 @@ namespace InventoriaApi.Controllers
             // note that User will never be null here
             User? user = _userRepository.ReadUserRecordByEmail(authenticateUserDTO.StudieEmail);
 
+            user.LastLoginDate = TimeUtil.GetDanishDatetime();
+
+            // Save the update
+            await _userRepository.UpdateRecord(user);
+
             var userRoles = await _userRoleRepository.ReadAllUserRolesByUserID(user.UserID);
             //setting up claims list
             List<Claim> claims = new()
@@ -47,12 +52,13 @@ namespace InventoriaApi.Controllers
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName));
             }
-
+           
             // This line is used for getting the key from the appsettings configuration file. It is defunct.
             //var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")));
 
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
 
             var Sectoken = new JwtSecurityToken(
               issuer: _config["Jwt:Issuer"],
