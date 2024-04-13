@@ -11,5 +11,13 @@ namespace InventoriaApi.Services.Repositories
         public ServerRoomRepository(InventoriaDBcontext DBcontext) : base(DBcontext)
         {
         }
+        public async Task<IEnumerable<ServerRoom>> ReadAllRecordsWithDetailsAsync()
+        {
+            return await _context.ServerRooms
+                .Include(sr => sr.DataCenter)
+                .ThenInclude(dc => dc.Company)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

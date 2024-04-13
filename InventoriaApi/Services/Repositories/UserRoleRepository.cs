@@ -32,4 +32,14 @@ public class UserRoleRepository : GenericRepository<UserRole, InventoriaDBcontex
         await _context.UserRoles.AddAsync(userRole);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool> DeleteRecord(int userRoleId)
+    {
+        var userRole = await _context.UserRoles.FindAsync(userRoleId);
+        if (userRole == null) return false;
+
+        _context.UserRoles.Remove(userRole);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

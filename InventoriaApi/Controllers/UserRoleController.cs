@@ -6,62 +6,88 @@ using System.Security.Claims;
 using InventoriaApi.Services.RepositoryInterfaces;
 using InventoriaApi.Services.Repositories;
 using InventoriaApi.Models;
-using InventoriaApi.DTOs.ReceivedDTOs;
 using InventoriaApi.DTOs.ResponseDTO;
 using System.Security.Cryptography;
+using InventoriaApi.DTOs.ReceivedDTOs;
+using System.Threading.Tasks;
+using System;
 
 namespace InventoriaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserRoleController : Controller
+    public class UserRoleController : ControllerBase
     {
-        private IUserRepository _userRepository;
         private IUserRoleRepository _userRoleRepository;
-        private IRoleRepository _roleRepository;
-        private IConfiguration _config;
-        public UserRoleController(IConfiguration config, IUserRepository userRepository, IUserRoleRepository userRoleRepository, IRoleRepository roleRepository)
+
+        public UserRoleController(IUserRoleRepository userRoleRepository)
         {
-            _config = config;
-            _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
-            _roleRepository = roleRepository;
         }
 
-        [HttpPost("AssignUserRole")]
+        // Get user roles by user ID
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<IEnumerable<UserRoleDTO>>> GetUserRoles(int userId)
+        {
+            var userRoles = await _userRoleRepository.ReadAllUserRolesByUserID(userId);
+            if (userRoles == null || userRoles.Count == 0)
+            {
+                return NotFound("No roles found for the user.");
+            }
+
+            var userRoleDTOs = userRoles.Select(ur => new UserRoleDTO
+            {
+                UserRoleID = ur.UserRoleID,
+                UserID = ur.UserID,
+                RoleID = ur.RoleID,
+                RoleName = ur.Role.RoleName
+            }).ToList();
+
+            return Ok(userRoleDTOs);
+        }
+
+        // Assign a role to a user
+        [HttpPost("Assign")]
         public async Task<IActionResult> AssignUserRole([FromBody] AssignUserRoleDTO assignRoleDTO)
         {
-
-            // Check if the user exists 
-            var user = await _userRepository.ReadRecordByID(assignRoleDTO.UserId);
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound($"User with ID {assignRoleDTO.UserId} not found.");
+                return BadRequest(ModelState);
             }
 
-            //check that the role exists
-            var roleExists = await _roleRepository.ReadRecordToVerify(assignRoleDTO.RoleId);
-            if (!roleExists)
+            if (await _userRoleRepository.UserHasRole(assignRoleDTO.UserId, assignRoleDTO.RoleId))
             {
-                return NotFound($"Role with ID {assignRoleDTO.RoleId} not found.");
+                return BadRequest("User already has the assigned role.");
             }
 
-            //check if role is already assigned
-            var roleAlreadyAssigned = await _userRoleRepository.UserHasRole(user.UserID, assignRoleDTO.RoleId);
-            if (roleAlreadyAssigned)
-            {
-                return BadRequest($"User already has the role.");
-            }
-
-            // Assign the role to the user
             try
             {
-                await _userRoleRepository.AssignRoleToUser(user.UserID, assignRoleDTO.RoleId);
-                return Ok($"Role with ID {assignRoleDTO.RoleId} successfully assigned to user {user.Displayname}.");
+                await _userRoleRepository.AssignRoleToUser(assignRoleDTO.UserId, assignRoleDTO.RoleId);
+                return Ok("Role assigned successfully.");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred while assigning the role: {ex.Message}");
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        // Remove a role from a user
+        [HttpDelete("{userRoleId}")]
+        public async Task<IActionResult> RemoveUserRole(int userRoleId)
+        {
+            try
+            {
+                var result = await _userRoleRepository.DeleteRecord(userRoleId);
+                if (!result)
+                {
+                    return NotFound("UserRole not found.");
+                }
+
+                return Ok("UserRole removed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
     }

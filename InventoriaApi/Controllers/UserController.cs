@@ -6,11 +6,11 @@ using System.Security.Claims;
 using InventoriaApi.Services.RepositoryInterfaces;
 using InventoriaApi.Services.Repositories;
 using InventoriaApi.Models;
-using InventoriaApi.DTOs.ReceivedDTOs;
-using InventoriaApi.DTOs.ResponseDTO;
 using System.Security.Cryptography;
 using System.ComponentModel.Design;
 using Microsoft.AspNetCore.Authorization;
+using InventoriaApi.DTOs.ReceivedDTOs;
+using InventoriaApi.DTOs.ResponseDTO;
 
 namespace InventoriaApi.Controllers;
 

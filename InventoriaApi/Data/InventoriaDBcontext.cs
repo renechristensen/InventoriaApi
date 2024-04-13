@@ -8,26 +8,25 @@ public class InventoriaDBcontext : DbContext
     public InventoriaDBcontext(DbContextOptions<InventoriaDBcontext> options) : base(options)
     {
     }
-
+    public DbSet<Alert> Alerts { get; set; }
+    public DbSet<AlertType> AlertTypes { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<DataCenter> DataCenters { get; set; }
-    public DbSet<ServerRoom> ServerRooms { get; set; }
     public DbSet<DataRack> DataRacks { get; set; }
-    public DbSet<RackUnit> RackUnits { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
-    public DbSet<Reservation> Reservations { get; set; }
-    public DbSet<ReservedRackUnit> ReservedRackUnits { get; set; }
+    public DbSet<DataRacksChangeLog> DataRacksChangeLogs { get; set; }
     public DbSet<Equipment> Equipments { get; set; }
     public DbSet<EquipmentRackUnit> EquipmentRackUnits { get; set; }
     public DbSet<EnvironmentalReading> EnvironmentalReadings { get; set; }
     public DbSet<EnvironmentalSetting> EnvironmentalSettings { get; set; }
-    public DbSet<AlertType> AlertTypes { get; set; }
-    public DbSet<AlertType> Alerts { get; set; }
     public DbSet<RackAccessPermission> RackAccessPermissions { get; set; }
+    public DbSet<RackUnit> RackUnits { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<ReservedRackUnit> ReservedRackUnits { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<ServerRoom> ServerRooms { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<UserChangeLog> UserChangeLogs { get; set; }
-    public DbSet<DataRacksChangeLog> DataRacksChangeLogs { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,7 +42,7 @@ public class InventoriaDBcontext : DbContext
 
         modelBuilder.Entity<AlertType>(entity =>
         {
-            entity.ToTable("AlertTypes");
+            entity.ToTable("AlertType");
             entity.HasKey(at => at.AlertTypeID);
             entity.Property(at => at.TypeName).IsRequired().HasMaxLength(255);
             entity.Property(at => at.Description).HasColumnType("text");
@@ -176,7 +175,7 @@ public class InventoriaDBcontext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.ToTable("Roles");
+            entity.ToTable("Role");
             entity.HasKey(r => r.RoleID);
             entity.HasIndex(r => r.RoleName).IsUnique();
             entity.Property(r => r.RoleName).IsRequired().HasMaxLength(255);
@@ -200,7 +199,7 @@ public class InventoriaDBcontext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.ToTable("Users");
+            entity.ToTable("User");
             entity.HasKey(u => u.UserID);
             entity.Property(u => u.Displayname).IsRequired().HasMaxLength(255);
             entity.Property(u => u.PasswordHash).IsRequired();

@@ -11,5 +11,17 @@ namespace InventoriaApi.Services.Repositories
         public DataRackRepository(InventoriaDBcontext DBcontext) : base(DBcontext)
         {
         }
+
+
+        public async Task<IEnumerable<DataRack>> ReadAllRecordsWithDetailsAsync()
+        {
+            return await _context.DataRacks
+                .Include(dr => dr.ServerRoom)
+                    .ThenInclude(sr => sr.DataCenter)
+                        .ThenInclude(dc => dc.Company)
+                .AsNoTracking() 
+                .ToListAsync();
+        }
+
     }
 }

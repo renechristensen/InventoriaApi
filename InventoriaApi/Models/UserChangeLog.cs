@@ -13,4 +13,3 @@ public class UserChangeLog
     public User User { get; set; }
     public User ChangedByUser { get; set; }
 }
-
