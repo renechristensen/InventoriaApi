@@ -3,6 +3,8 @@
 namespace InventoriaApi.DTOs.ResponseDTO;
 public class DataRackTableRecordsDTO
 {
+    [StringLength(255, ErrorMessage = "Rackname must be 255 characters or less")]
+    public string datarackName { get; set; }
     public int DataRackID { get; set; }
 
     [StringLength(255, ErrorMessage = "Server room name must be 255 characters or less")]

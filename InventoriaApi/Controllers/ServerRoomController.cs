@@ -21,7 +21,7 @@ namespace InventoriaApi.Controllers
             _serverRoomRepository = serverRoomRepository;
         }
 
-        [HttpGet("GetAllServerRooms")]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ServerRoomResponseDTO>>> GetAllServerRooms()
         {

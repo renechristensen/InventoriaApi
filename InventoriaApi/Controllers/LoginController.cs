@@ -30,7 +30,7 @@ namespace InventoriaApi.Controllers
             
             // check if login was succesful
             if (!await _userRepository.VerifyLogin(authenticateUserDTO.StudieEmail, authenticateUserDTO.PasswordHash)) 
-                return StatusCode(404, "Username or password is wrong");
+                return StatusCode(401, "Username or password is wrong");
 
             // note that User will never be null here
             User? user = _userRepository.ReadUserRecordByEmail(authenticateUserDTO.StudieEmail);

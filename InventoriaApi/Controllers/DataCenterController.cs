@@ -32,7 +32,8 @@ namespace InventoriaApi.Controllers
                 Name = dc.Name,
                 Address = dc.Address,
                 Description = dc.Description,
-                CompanyID = dc.CompanyID
+                CompanyID = dc.CompanyID,
+                CompanyName = dc.Company.Name
             }).ToList();
 
             return Ok(dataCenterDTOs);

@@ -17,7 +17,7 @@ namespace InventoriaApi.DTOs.ReceivedDTOs
         public int RackCapacity { get; set; }
 
         [Required]
-        public DateTime StartupDate { get; set; }
+        public DateTime StartupDate { get; set; }  
     }
 
     public class UpdateServerRoomDTO

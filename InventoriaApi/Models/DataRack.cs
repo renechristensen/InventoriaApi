@@ -2,6 +2,7 @@
 
 public class DataRack
 {
+    public string datarackName { get; set; }
     public int DataRackID { get; set; }
     public int ServerRoomID { get; set; }
     public string RackPlacement { get; set; }

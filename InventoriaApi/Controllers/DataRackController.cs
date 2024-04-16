@@ -21,7 +21,7 @@ namespace InventoriaApi.Controllers
             _dataRackRepository = dataRackRepository;
         }
 
-        [HttpGet("GetAllDataRackTableRecords")]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<DataRackTableRecordsDTO>>> GetAllDataRackTableRecords()
         {
@@ -37,7 +37,8 @@ namespace InventoriaApi.Controllers
                     TotalUnits = dr.TotalUnits,
                     AvailableUnits = dr.AvailableUnits,
                     DataCenterName = dr.ServerRoom?.DataCenter?.Name,
-                    CompanyName = dr.ServerRoom?.DataCenter?.Company?.Name
+                    CompanyName = dr.ServerRoom?.DataCenter?.Company?.Name,
+                    datarackName = dr.datarackName
                 }).ToList();
 
                 return Ok(dataRackDTOs);
@@ -48,7 +49,7 @@ namespace InventoriaApi.Controllers
             }
         }
 
-        [HttpPost("CreateDataRack")]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CreateDataRack(CreateDataRackDTO dto)
         {
@@ -61,6 +62,7 @@ namespace InventoriaApi.Controllers
             {
                 await _dataRackRepository.CreateRecord(new DataRack
                 {
+                    datarackName =dto.datarackName,
                     ServerRoomID = dto.ServerRoomID,
                     RackPlacement = dto.RackPlacement,
                     TotalUnits = dto.TotalUnits,
@@ -77,7 +79,7 @@ namespace InventoriaApi.Controllers
             }
         }
 
-        [HttpPut("UpdateDataRack/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDataRack(int id, UpdateDataRackDTO dto)
         {
@@ -93,6 +95,7 @@ namespace InventoriaApi.Controllers
             }
 
             // Updating properties
+            dataRack.datarackName = dto.datarackName ?? dataRack.datarackName;
             dataRack.RackPlacement = dto.RackPlacement ?? dataRack.RackPlacement;
             dataRack.TotalUnits = dto.TotalUnits > 0 ? dto.TotalUnits : dataRack.TotalUnits;
             dataRack.AvailableUnits = dto.AvailableUnits >= 0 ? dto.AvailableUnits : dataRack.AvailableUnits;
@@ -109,7 +112,7 @@ namespace InventoriaApi.Controllers
             }
         }
 
-        [HttpDelete("DeleteDataRack/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDataRack(int id)
         {
