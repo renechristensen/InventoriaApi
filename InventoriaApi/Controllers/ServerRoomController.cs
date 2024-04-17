@@ -46,7 +46,7 @@ namespace InventoriaApi.Controllers
             }
         }
 
-        [HttpPost("CreateServerRoom")]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CreateServerRoom(CreateServerRoomDTO dto)
         {
@@ -73,7 +73,7 @@ namespace InventoriaApi.Controllers
             }
         }
 
-        [HttpPut("UpdateServerRoom/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateServerRoom(int id, UpdateServerRoomDTO dto)
         {
@@ -104,7 +104,7 @@ namespace InventoriaApi.Controllers
             }
         }
 
-        [HttpDelete("DeleteServerRoom/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteServerRoom(int id)
         {

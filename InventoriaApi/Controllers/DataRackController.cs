@@ -22,7 +22,6 @@ namespace InventoriaApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<DataRackTableRecordsDTO>>> GetAllDataRackTableRecords()
         {
             try
@@ -38,7 +37,9 @@ namespace InventoriaApi.Controllers
                     AvailableUnits = dr.AvailableUnits,
                     DataCenterName = dr.ServerRoom?.DataCenter?.Name,
                     CompanyName = dr.ServerRoom?.DataCenter?.Company?.Name,
-                    datarackName = dr.datarackName
+                    DatarackName = dr.datarackName,
+                    RackPlacement = dr.RackPlacement,
+                    Roles = dr.RackAccessPermissions.Select(rap => rap.Role.RoleName).ToList()
                 }).ToList();
 
                 return Ok(dataRackDTOs);
@@ -48,6 +49,42 @@ namespace InventoriaApi.Controllers
                 return StatusCode(500, "An error occurred while retrieving data racks: " + ex.Message);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DataRackTableRecordsDTO>> GetDataRackById(int id)
+        {
+            try
+            {
+                var dataRack = await _dataRackRepository.ReadDataRackRecordByID(id);
+                if (dataRack == null)
+                {
+                    return NotFound($"Data rack with ID {id} not found.");
+                }
+
+                var dataRackDTO = new DataRackTableRecordsDTO
+                {
+                    DataRackID = dataRack.DataRackID,
+                    ServerRoomName = dataRack.ServerRoom?.ServerRoomName,
+                    RackStartupDate = dataRack.CreationDate,
+                    RackStatus = dataRack.Status,
+                    TotalUnits = dataRack.TotalUnits,
+                    AvailableUnits = dataRack.AvailableUnits,
+                    DataCenterName = dataRack.ServerRoom?.DataCenter?.Name,
+                    CompanyName = dataRack.ServerRoom?.DataCenter?.Company?.Name,
+                    DatarackName = dataRack.datarackName,
+                    RackPlacement = dataRack.RackPlacement,
+                    Roles = dataRack.RackAccessPermissions.Select(rap => rap.Role.RoleName).ToList()
+                };
+
+                return Ok(dataRackDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while retrieving the data rack: " + ex.Message);
+            }
+        }
+
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]

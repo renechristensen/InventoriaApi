@@ -19,8 +19,21 @@ namespace InventoriaApi.Services.Repositories
                 .Include(dr => dr.ServerRoom)
                     .ThenInclude(sr => sr.DataCenter)
                         .ThenInclude(dc => dc.Company)
+                .Include(dr=> dr.RackAccessPermissions)
+                     .ThenInclude(rap => rap.Role)
                 .AsNoTracking() 
                 .ToListAsync();
+        }
+
+        public async Task<DataRack> ReadDataRackRecordByID(int id)
+        {
+            return await _context.DataRacks
+                .Include(dr => dr.ServerRoom)
+                    .ThenInclude(sr => sr.DataCenter)
+                        .ThenInclude(dc => dc.Company)
+                .Include(dr=> dr.RackAccessPermissions)
+                        .ThenInclude(rap => rap.Role)
+                .FirstOrDefaultAsync(dr => dr.DataRackID == id);
         }
 
     }
