@@ -169,8 +169,12 @@ public class InventoriaDBcontext : DbContext
         {
             entity.ToTable("ReservedRackUnit");
             entity.HasKey(rru => rru.ReservedRackUnitID);
-            entity.HasOne(rru => rru.Reservation).WithMany(r => r.ReservedRackUnits).HasForeignKey(rru => rru.ReservationID);
-            entity.HasOne(rru => rru.RackUnit).WithMany().HasForeignKey(rru => rru.RackUnitID);
+            entity.HasOne(rru => rru.Reservation)
+                  .WithMany(r => r.ReservedRackUnits)
+                  .HasForeignKey(rru => rru.ReservationID);
+            entity.HasOne(rru => rru.RackUnit)
+                  .WithMany(ru => ru.ReservedRackUnits) 
+                  .HasForeignKey(rru => rru.RackUnitID);
         });
 
         modelBuilder.Entity<Role>(entity =>

@@ -26,7 +26,6 @@ public class UserController : Controller
         _userRepository = userRepository;
     }
     [HttpPost("CreateUser")]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> CreateUser([FromBody] CreateUserDTO createUserDTO)
     {
         if (!ModelState.IsValid)

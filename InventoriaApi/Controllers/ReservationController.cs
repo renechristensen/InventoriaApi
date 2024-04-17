@@ -33,8 +33,8 @@ namespace InventoriaApi.Controllers
             {
                 ReservationID = reservation.ReservationID,
                 UserID = reservation.UserID,
-                StartDate = reservation.StartDate,
-                EndDate = reservation.EndDate,
+                StartDate = (DateTime)reservation.StartDate,
+                EndDate = (DateTime)reservation.EndDate,
                 Background = reservation.Background
             };
         }

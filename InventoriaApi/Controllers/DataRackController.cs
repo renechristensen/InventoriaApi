@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using InventoriaApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using InventoriaApi.DTOs.ResponseDTO;
+using InventoriaApi.Services.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoriaApi.Controllers
 {
@@ -15,10 +17,11 @@ namespace InventoriaApi.Controllers
     public class DataRackController : ControllerBase
     {
         private readonly IDataRackRepository _dataRackRepository;
-
-        public DataRackController(IDataRackRepository dataRackRepository)
+        private readonly IRackUnitRepository _rackUnitRepository;
+        public DataRackController(IDataRackRepository dataRackRepository, IRackUnitRepository rackUnitRepository)
         {
             _dataRackRepository = dataRackRepository;
+            _rackUnitRepository = rackUnitRepository;
         }
 
         [HttpGet]
@@ -97,24 +100,43 @@ namespace InventoriaApi.Controllers
 
             try
             {
-                await _dataRackRepository.CreateRecord(new DataRack
+                var newRack = new DataRack
                 {
-                    datarackName =dto.datarackName,
+                    datarackName = dto.datarackName,
                     ServerRoomID = dto.ServerRoomID,
                     RackPlacement = dto.RackPlacement,
                     TotalUnits = dto.TotalUnits,
                     AvailableUnits = dto.AvailableUnits,
                     Status = dto.Status,
-                    CreationDate = DateTime.UtcNow // Assuming you're setting the creation date to the current time
-                });
+                    CreationDate = DateTime.UtcNow
+                };
 
-                return Ok("Data rack created successfully.");
+                // Add new DataRack to database
+                await _dataRackRepository.CreateRecord(newRack);
+                await _dataRackRepository.SaveRecord();  // Ensure DataRack is saved to get an ID
+
+                // Generate RackUnit objects for each unit in DataRack
+                for (int i = 1; i <= dto.TotalUnits; i++)
+                {
+                    var rackUnit = new RackUnit
+                    {
+                        DataRackID = newRack.DataRackID, // The ID of the newly created DataRack
+                        UnitNumber = i
+                    };
+
+                    // Using the RackUnitRepository to create RackUnit
+                    await _rackUnitRepository.CreateRecord(rackUnit);
+                }
+
+                await _rackUnitRepository.SaveRecord();
+                return Ok("Data rack and its units created successfully.");
             }
             catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred while creating the data rack: " + ex.Message);
             }
         }
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]

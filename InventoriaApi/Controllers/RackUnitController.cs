@@ -20,21 +20,33 @@ namespace InventoriaApi.Controllers
             _rackUnitRepository = rackUnitRepository;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RackUnitDTO>> GetRackUnit(int id)
+ 
+        [HttpGet("{datarackID}")]
+        public async Task<ActionResult<IEnumerable<RackUnitFlatDTO>>> GetRackUnitsByDataRack(int datarackID)
         {
-            var rackUnit = await _rackUnitRepository.ReadRecordByID(id);
-            if (rackUnit == null)
-            {
-                return NotFound();
-            }
+            var rackUnits = await _rackUnitRepository.GetAllRackUnitsByDataRackId(datarackID);
 
-            return new RackUnitDTO
-            {
-                RackUnitID = rackUnit.RackUnitID,
-                DataRackID = rackUnit.DataRackID,
-                UnitNumber = rackUnit.UnitNumber
-            };
+            var rackUnitDTOs = 
+                // basically, check if the rack unit has any reservation. If it does, use those. If not, pretend one exists to simplify making this dto.This one was a brain twister
+                // this list CAN IN THEORY include multiple reservedunits pointing at the same unit, do to the possibility of having multiple reservations at different times.
+                rackUnits.SelectMany(ru =>
+                (ru.ReservedRackUnits.Any() ? ru.ReservedRackUnits : new List<ReservedRackUnit> { new ReservedRackUnit { Reservation = new Reservation() } })
+                .Select(rru => new RackUnitFlatDTO
+                {
+                    RackUnitID = ru.RackUnitID,
+                    UnitNumber = ru.UnitNumber,
+                    StartDate = rru.Reservation.StartDate?.ToString("yyyy-MM-dd"),
+                    EndDate = rru.Reservation.EndDate?.ToString("yyyy-MM-dd"),
+                    ReservationBackground = rru.Reservation.Background,
+                    UserName = rru.Reservation.User?.Displayname,
+                    UserEmail = rru.Reservation.User?.StudieEmail,
+                    EquipmentName = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Name,
+                    EquipmentModel = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Model,
+                    EquipmentType = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Type
+                }))
+                .ToList();
+
+            return Ok(rackUnitDTOs);
         }
 
         [HttpPost]
@@ -52,7 +64,7 @@ namespace InventoriaApi.Controllers
             };
 
             await _rackUnitRepository.CreateRecord(newRackUnit);
-            return CreatedAtAction(nameof(GetRackUnit), new { id = newRackUnit.RackUnitID }, newRackUnit);
+            return Ok("Rack unit successfully created");
         }
 
         [HttpPut("{id}")]
