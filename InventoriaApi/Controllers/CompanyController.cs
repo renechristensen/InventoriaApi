@@ -22,7 +22,7 @@ namespace InventoriaApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<IEnumerable<CompanyResponseDTO>>> GetAllCompanies()
         {
             var companies = await _companyRepository.ReadAllRecordsWithDetailsAsync();

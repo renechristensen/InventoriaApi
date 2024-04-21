@@ -38,8 +38,8 @@ namespace InventoriaApi.Controllers
                     StartDate = rru.Reservation.StartDate?.ToString("yyyy-MM-dd"),
                     EndDate = rru.Reservation.EndDate?.ToString("yyyy-MM-dd"),
                     ReservationBackground = rru.Reservation.Background,
-                    UserName = rru.Reservation.User?.Displayname,
-                    UserEmail = rru.Reservation.User?.StudieEmail,
+                    DisplayName = rru.Reservation.User?.Displayname,
+                    StudieEmail = rru.Reservation.User?.StudieEmail,
                     EquipmentName = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Name,
                     EquipmentModel = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Model,
                     EquipmentType = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Type
