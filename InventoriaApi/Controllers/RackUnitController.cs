@@ -24,30 +24,33 @@ namespace InventoriaApi.Controllers
         [HttpGet("{datarackID}")]
         public async Task<ActionResult<IEnumerable<RackUnitFlatDTO>>> GetRackUnitsByDataRack(int datarackID)
         {
+            var today = DateTime.Today;
             var rackUnits = await _rackUnitRepository.GetAllRackUnitsByDataRackId(datarackID);
 
-            var rackUnitDTOs = 
-                // basically, check if the rack unit has any reservation. If it does, use those. If not, pretend one exists to simplify making this dto.This one was a brain twister
-                // this list CAN IN THEORY include multiple reservedunits pointing at the same unit, do to the possibility of having multiple reservations at different times.
-                rackUnits.SelectMany(ru =>
-                (ru.ReservedRackUnits.Any() ? ru.ReservedRackUnits : new List<ReservedRackUnit> { new ReservedRackUnit { Reservation = new Reservation() } })
-                .Select(rru => new RackUnitFlatDTO
+            var rackUnitDTOs = rackUnits.Select(ru =>
+            {
+                // Check for any reservations active today
+                var currentReservation = ru.ReservedRackUnits
+                    .FirstOrDefault(rru => rru.Reservation.StartDate <= today && rru.Reservation.EndDate >= today);
+
+                return new RackUnitFlatDTO
                 {
                     RackUnitID = ru.RackUnitID,
                     UnitNumber = ru.UnitNumber,
-                    StartDate = rru.Reservation.StartDate?.ToString("yyyy-MM-dd"),
-                    EndDate = rru.Reservation.EndDate?.ToString("yyyy-MM-dd"),
-                    ReservationBackground = rru.Reservation.Background,
-                    DisplayName = rru.Reservation.User?.Displayname,
-                    StudieEmail = rru.Reservation.User?.StudieEmail,
-                    EquipmentName = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Name,
-                    EquipmentModel = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Model,
-                    EquipmentType = ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Type
-                }))
-                .ToList();
+                    StartDate = currentReservation?.Reservation.StartDate.ToString("yyyy-MM-dd"),
+                    EndDate = currentReservation?.Reservation.EndDate.ToString("yyyy-MM-dd"),
+                    ReservationBackground = currentReservation?.Reservation.Background,
+                    DisplayName = currentReservation?.Reservation.User?.Displayname,
+                    StudieEmail = currentReservation?.Reservation.User?.StudieEmail,
+                    EquipmentName = currentReservation != null ? ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Name : null,
+                    EquipmentModel = currentReservation != null ? ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Model : null,
+                    EquipmentType = currentReservation != null ? ru.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Type : null
+                };
+            }).ToList();
 
             return Ok(rackUnitDTOs);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateRackUnit(CreateRackUnitDTO dto)
