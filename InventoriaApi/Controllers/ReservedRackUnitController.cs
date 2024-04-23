@@ -80,5 +80,34 @@ namespace InventoriaApi.Controllers
             await _reservedRackUnitRepository.DeleteRecord(id);
             return NoContent();
         }
+
+        [HttpGet("ByReservation/{reservationId}")]
+        public async Task<ActionResult<List<RackUnitFlatDTO>>> GetReservedRackUnitsByReservation(int reservationId)
+        {
+            var reservedRackUnits = await _reservedRackUnitRepository.GetReservedRackUnitsByReservationId(reservationId);
+            if (!reservedRackUnits.Any())
+            {
+                return NotFound("No reserved rack units found for the specified reservation.");
+            }
+
+            var today = DateTime.Today;
+            var rackUnitDTOs = reservedRackUnits.Select(rru => new RackUnitFlatDTO
+            {
+                RackUnitID = rru.RackUnitID,
+                UnitNumber = rru.RackUnit.UnitNumber,
+                StartDate = rru.Reservation.StartDate.ToString("yyyy-MM-dd"),
+                EndDate = rru.Reservation.EndDate.ToString("yyyy-MM-dd"),
+                ReservationBackground = rru.Reservation.Background,
+                DisplayName = rru.Reservation.User?.Displayname,
+                StudieEmail = rru.Reservation.User?.StudieEmail,
+                EquipmentName = rru.RackUnit.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Name,
+                EquipmentModel = rru.RackUnit.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Model,
+                EquipmentType = rru.RackUnit.EquipmentRackUnits.FirstOrDefault()?.Equipment?.Type
+            }).ToList();
+
+            return Ok(rackUnitDTOs);
+        }
+
+
     }
 }

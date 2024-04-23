@@ -11,5 +11,18 @@ namespace InventoriaApi.Services.Repositories
         public ReservedRackUnitRepository(InventoriaDBcontext DBcontext) : base(DBcontext)
         {
         }
+
+        public async Task<List<ReservedRackUnit>> GetReservedRackUnitsByReservationId(int reservationId)
+        {
+            return await _context.ReservedRackUnits
+                .Where(rru => rru.ReservationID == reservationId)
+                .Include(rru => rru.RackUnit)
+                .ThenInclude(ru => ru.EquipmentRackUnits)
+                    .ThenInclude(eru => eru.Equipment)
+                .Include(rru => rru.Reservation)
+                    .ThenInclude(res => res.User)
+                .ToListAsync();
+        }
+
     }
 }

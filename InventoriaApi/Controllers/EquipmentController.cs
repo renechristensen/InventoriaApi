@@ -46,15 +46,31 @@ namespace InventoriaApi.Controllers
                 return BadRequest(ModelState);
             }
 
+            bool areUnitsAvailable = await _equipmentRepository.AreRackUnitsAvailable(dto.RackUnitIDs);
+            if (!areUnitsAvailable)
+            {
+                return BadRequest("One or more rack units are not available.");
+            }
+
             var newEquipment = new Equipment
             {
                 Name = dto.Name,
                 Model = dto.Model,
-                Type = dto.Type
+                Type = dto.Type,
+                EquipmentRackUnits = dto.RackUnitIDs.Select(id => new EquipmentRackUnit { RackUnitID = id }).ToList()
             };
 
             await _equipmentRepository.CreateRecord(newEquipment);
-            return CreatedAtAction(nameof(GetEquipment), new { id = newEquipment.EquipmentID }, newEquipment);
+            var equipmentDto = new EquipmentDTO
+            {
+                EquipmentID = newEquipment.EquipmentID,
+                Name = newEquipment.Name,
+                Model = newEquipment.Model,
+                Type = newEquipment.Type,
+                RackUnitIDs = newEquipment.EquipmentRackUnits.Select(e => e.RackUnitID).ToList()
+            };
+
+            return CreatedAtAction(nameof(GetEquipment), new { id = newEquipment.EquipmentID }, equipmentDto);
         }
 
         [HttpPut("{id}")]
@@ -84,6 +100,17 @@ namespace InventoriaApi.Controllers
         {
             await _equipmentRepository.DeleteRecord(id);
             return NoContent();
+        }
+
+        [HttpDelete("ByRackUnit/{rackUnitId}")]
+        public async Task<IActionResult> DeleteEquipmentByRackUnitId(int rackUnitId)
+        {
+            bool deleted = await _equipmentRepository.DeleteEquipmentByRackUnitId(rackUnitId);
+            if (deleted)
+            {
+                return Ok("Equipment deleted successfully.");
+            }
+            return NotFound("Equipment not found for the specified rack unit ID.");
         }
     }
 }

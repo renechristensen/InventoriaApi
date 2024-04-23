@@ -15,6 +15,7 @@ namespace InventoriaApi.DTOs.ReceivedDTOs
         [Required]
         [StringLength(255)]
         public string Type { get; set; }
+        public List<int> RackUnitIDs { get; set; }
     }
 
     public class UpdateEquipmentDTO
