@@ -28,5 +28,25 @@ namespace InventoriaApi.Services.Repositories
                 .ToListAsync();
         }
 
+        public async Task<int> DeleteReservationsByRackUnitAndDate(int rackUnitId, DateTime startDate, DateTime endDate)
+        {
+            var reservations = _context.Reservations
+                                       .Include(r => r.ReservedRackUnits)
+                                       .Where(r => r.ReservedRackUnits.Any(ru => ru.RackUnitID == rackUnitId)
+                                                && r.StartDate <= endDate
+                                                && r.EndDate >= startDate)
+                                       .ToList();
+
+            if (reservations.Any())
+            {
+                _context.Reservations.RemoveRange(reservations);
+                return await _context.SaveChangesAsync();
+            }
+
+            return 0;
+        }
+
+
     }
 }
+

@@ -101,12 +101,17 @@ public class InventoriaDBcontext : DbContext
             entity.Property(er => er.Temperature).IsRequired().HasColumnType("float");
             entity.Property(er => er.Humidity).IsRequired().HasColumnType("float");
             entity.Property(er => er.ReadingTimestamp).IsRequired().HasColumnType("datetime");
+
+            // Define the foreign key relationship
+            entity.HasOne(er => er.EnvironmentalSetting)
+                  .WithMany()
+                  .HasForeignKey(er => er.EnvironmentalSettingsID);
         });
 
         modelBuilder.Entity<EnvironmentalSetting>(entity =>
         {
             entity.ToTable("EnvironmentalSetting");
-            entity.HasKey(es => es.EnvironmentalSettingID);
+            entity.HasKey(es => es.EnvironmentalSettingsID);
             entity.Property(es => es.TemperatureUpperLimit).IsRequired();
             entity.Property(es => es.TemperatureLowerLimit).IsRequired();
             entity.Property(es => es.HumidityUpperLimit).IsRequired();

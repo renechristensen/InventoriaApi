@@ -11,6 +11,9 @@ namespace InventoriaApi.DTOs.ReceivedDTOs
         public float? Humidity { get; set; }
 
         public DateTime? ReadingTimestamp { get; set; } // Optional if set automatically
+
+        [Required]
+        public int EnvironmentalSettingsID { get; set; } // Ensure this is passed and valid
     }
 
     public class UpdateEnvironmentalReadingDTO

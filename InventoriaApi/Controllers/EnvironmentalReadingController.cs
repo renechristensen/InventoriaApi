@@ -41,17 +41,18 @@ namespace InventoriaApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var environmentalReading = new EnvironmentalReading
             {
-                Temperature = (float) dto.Temperature,
-                Humidity = (float) dto.Humidity,
-                ReadingTimestamp = DateTime.UtcNow // You might set this automatically or via DTO
+                Temperature = (float)dto.Temperature,
+                Humidity = (float)dto.Humidity,
+                ReadingTimestamp = dto.ReadingTimestamp ?? DateTime.UtcNow,
+                EnvironmentalSettingsID = dto.EnvironmentalSettingsID // Set the foreign key
             };
 
             await _environmentalReadingRepository.CreateRecord(environmentalReading);
             return CreatedAtAction(nameof(GetAllEnvironmentalReadings), new { id = environmentalReading.EnvironmentalReadingID }, environmentalReading);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEnvironmentalReading(int id, [FromBody] UpdateEnvironmentalReadingDTO dto)

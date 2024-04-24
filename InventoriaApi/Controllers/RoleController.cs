@@ -77,5 +77,23 @@ namespace InventoriaApi.Controllers
             await _roleRepository.DeleteRecord(id);
             return NoContent();
         }
+
+        [HttpGet("GetAllRoles")]
+        public async Task<ActionResult<IEnumerable<UserRoleDTO>>> GetAllUserRoles()
+        {
+            var roles = await _roleRepository.ReadAllRecords();
+            if (roles == null || !roles.Any())
+            {
+                return NotFound("No roles found.");
+            }
+
+            var roleDTOs = roles.Select(r => new RoleDTO
+            {
+                RoleID = r.RoleID,
+                RoleName = r.RoleName
+            }).ToList();
+
+            return Ok(roleDTOs);
+        }
     }
 }

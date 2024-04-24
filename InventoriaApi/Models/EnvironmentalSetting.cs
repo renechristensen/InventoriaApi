@@ -2,7 +2,7 @@
 
 public class EnvironmentalSetting
 {
-    public int EnvironmentalSettingID { get; set; }
+    public int EnvironmentalSettingsID { get; set; }
     public int ServerRoomID { get; set; }
     public float TemperatureUpperLimit { get; set; }
     public float TemperatureLowerLimit { get; set; }

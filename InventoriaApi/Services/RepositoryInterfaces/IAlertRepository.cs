@@ -5,5 +5,7 @@ namespace InventoriaApi.Services.RepositoryInterfaces
     public interface IAlertRepository : IGenericRepository<Alert>
     {
         public Task<IEnumerable<Alert>> ReadAllRecordsWithDetailsAsync();
+        public Task<bool> EnvironmentalReadingExists(int id);
+
     }
 }

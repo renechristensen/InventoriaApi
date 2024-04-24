@@ -140,5 +140,24 @@ namespace InventoriaApi.Controllers
             await _reservationRepository.DeleteRecord(id);
             return NoContent();
         }
+
+        [HttpDelete("by-rack-unit")]
+        public async Task<IActionResult> DeleteReservationsByRackUnit(int rackUnitId, DateTime startDate, DateTime endDate)
+        {
+            if (startDate >= endDate)
+            {
+                return BadRequest("Start date must be before end date.");
+            }
+
+            var affectedReservations = await _reservationRepository.DeleteReservationsByRackUnitAndDate(rackUnitId, startDate, endDate);
+
+            if (affectedReservations == 0)
+            {
+                return NotFound("No reservations found for the specified rack unit ID and date range.");
+            }
+
+            return Ok($"{affectedReservations} reservations deleted successfully.");
+        }
+
     }
 }

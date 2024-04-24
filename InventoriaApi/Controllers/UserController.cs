@@ -161,4 +161,25 @@ public class UserController : Controller
 
         return Ok(userDTOs);
     }
+    [HttpDelete("DeleteUser/{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        try
+        {
+            var userExists = await _userRepository.ReadRecordToVerify(id);
+            if (!userExists)
+            {
+                return NotFound($"User with ID {id} not found.");
+            }
+
+            await _userRepository.DeleteRecord(id);
+            return Ok($"User with ID {id} deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An internal server error has occurred: " + ex.Message);
+        }
+    }
+
 }

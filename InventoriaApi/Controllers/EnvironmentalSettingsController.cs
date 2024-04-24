@@ -30,7 +30,7 @@ namespace InventoriaApi.Controllers
 
             return new EnvironmentalSettingDTO
             {
-                EnvironmentalSettingID = setting.EnvironmentalSettingID,
+                EnvironmentalSettingsID = setting.EnvironmentalSettingsID,
                 ServerRoomID = setting.ServerRoomID,
                 TemperatureUpperLimit = setting.TemperatureUpperLimit,
                 TemperatureLowerLimit = setting.TemperatureLowerLimit,
@@ -59,7 +59,7 @@ namespace InventoriaApi.Controllers
             };
 
             await _environmentalSettingRepository.CreateRecord(newSetting);
-            return CreatedAtAction(nameof(GetEnvironmentalSetting), new { id = newSetting.EnvironmentalSettingID }, newSetting);
+            return CreatedAtAction(nameof(GetEnvironmentalSetting), new { id = newSetting.EnvironmentalSettingsID }, newSetting);
         }
 
         [HttpPut("{id}")]
@@ -92,5 +92,30 @@ namespace InventoriaApi.Controllers
             await _environmentalSettingRepository.DeleteRecord(id);
             return NoContent();
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<EnvironmentalSettingDTO>>> GetAllEnvironmentalSettings()
+        {
+            var settings = await _environmentalSettingRepository.ReadAllRecordsWithServerRoom();
+            if (settings == null || !settings.Any())
+            {
+                return NotFound();
+            }
+
+            var settingsDto = settings.Select(setting => new EnvironmentalSettingDTO
+            {
+                EnvironmentalSettingsID = setting.EnvironmentalSettingsID,
+                ServerRoomID = setting.ServerRoomID,
+                ServerRoomName = setting.ServerRoom?.ServerRoomName,
+                TemperatureUpperLimit = setting.TemperatureUpperLimit,
+                TemperatureLowerLimit = setting.TemperatureLowerLimit,
+                HumidityUpperLimit = setting.HumidityUpperLimit,
+                HumidityLowerLimit = setting.HumidityLowerLimit,
+                LatestChange = setting.LatestChange
+            }).ToList();
+
+            return settingsDto;
+        }
+
     }
 }

@@ -42,4 +42,12 @@ public class UserRoleRepository : GenericRepository<UserRole, InventoriaDBcontex
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<List<UserRole>> ReadAllUserRoles()
+    {
+        return await _context.UserRoles
+            .Include(ur => ur.Role)
+            .ToListAsync();
+    }
+
 }

@@ -90,5 +90,25 @@ namespace InventoriaApi.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [HttpGet("GetAllUserRoles")]
+        public async Task<ActionResult<IEnumerable<UserRoleDTO>>> GetAllUserRoles()
+        {
+            var userRoles = await _userRoleRepository.ReadAllUserRoles();
+            if (userRoles == null || !userRoles.Any())
+            {
+                return NotFound("No user roles found.");
+            }
+
+            var userRoleDTOs = userRoles.Select(ur => new UserRoleDTO
+            {
+                UserRoleID = ur.UserRoleID,
+                UserID = ur.UserID,
+                RoleID = ur.RoleID,
+                RoleName = ur.Role.RoleName
+            }).ToList();
+
+            return Ok(userRoleDTOs);
+        }
     }
 }

@@ -7,4 +7,5 @@ public interface IUserRoleRepository : IGenericRepository<UserRole>
     public Task<bool> UserHasRole(int userId, int roleId);
     public Task AssignRoleToUser(int userId, int roleId);
     public Task<bool> DeleteRecord(int userRoleId);
+    Task<List<UserRole>> ReadAllUserRoles();
 }

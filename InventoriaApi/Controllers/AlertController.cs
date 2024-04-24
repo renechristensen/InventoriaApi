@@ -30,10 +30,25 @@ namespace InventoriaApi.Controllers
             {
                 AlertID = a.AlertID,
                 AlertTypeID = a.AlertTypeID,
+                AlertTypeName = a.AlertType.TypeName,
+                AlertTypeDescription = a.AlertType.Description,
                 ThresholdExceeded = a.ThresholdExceeded,
                 EnvironmentalReadingID = a.EnvironmentalReadingID,
+                Temperature = a.EnvironmentalReading.Temperature,
+                Humidity = a.EnvironmentalReading.Humidity,
+                ReadingTimestamp = a.EnvironmentalReading.ReadingTimestamp,
                 AlertTimestamp = a.AlertTimestamp,
-                Resolved = a.Resolved
+                Resolved = a.Resolved,
+                EnvironmentalSettingsID = a.EnvironmentalReading.EnvironmentalSettingsID,
+                TemperatureUpperLimit = a.EnvironmentalReading.EnvironmentalSetting.TemperatureUpperLimit,
+                TemperatureLowerLimit = a.EnvironmentalReading.EnvironmentalSetting.TemperatureLowerLimit,
+                HumidityUpperLimit = a.EnvironmentalReading.EnvironmentalSetting.HumidityUpperLimit,
+                HumidityLowerLimit = a.EnvironmentalReading.EnvironmentalSetting.HumidityLowerLimit,
+                LatestChange = a.EnvironmentalReading.EnvironmentalSetting.LatestChange,
+                ServerRoomID = a.EnvironmentalReading.EnvironmentalSetting.ServerRoom.ServerRoomID,
+                ServerRoomName = a.EnvironmentalReading.EnvironmentalSetting.ServerRoom.ServerRoomName,
+                RackCapacity = a.EnvironmentalReading.EnvironmentalSetting.ServerRoom.RackCapacity,
+                StartupDate = a.EnvironmentalReading.EnvironmentalSetting.ServerRoom.StartupDate
             }).ToList();
 
             return Ok(alertDTOs);
@@ -47,7 +62,11 @@ namespace InventoriaApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            var envReadingExists = await _alertRepository.EnvironmentalReadingExists(dto.EnvironmentalReadingID);
+            if (!envReadingExists)
+            {
+                return BadRequest("Invalid EnvironmentalReadingID: No corresponding environmental reading found.");
+            }
             var alert = new Alert
             {
                 AlertTypeID = dto.AlertTypeID,
