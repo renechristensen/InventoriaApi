@@ -41,17 +41,22 @@ namespace InventoriaApi.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            // Get the Danish datetime using the TimeUtil class
+            var danishDatetime = TimeUtil.GetDanishDatetime();
+
             var environmentalReading = new EnvironmentalReading
             {
                 Temperature = (float)dto.Temperature,
                 Humidity = (float)dto.Humidity,
-                ReadingTimestamp = dto.ReadingTimestamp ?? DateTime.UtcNow,
-                EnvironmentalSettingsID = dto.EnvironmentalSettingsID // Set the foreign key
+                ReadingTimestamp = danishDatetime, // Use Danish datetime
+                EnvironmentalSettingsID = dto.EnvironmentalSettingsID 
             };
 
             await _environmentalReadingRepository.CreateRecord(environmentalReading);
             return CreatedAtAction(nameof(GetAllEnvironmentalReadings), new { id = environmentalReading.EnvironmentalReadingID }, environmentalReading);
         }
+
 
 
         [HttpPut("{id}")]
